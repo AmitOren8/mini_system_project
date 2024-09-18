@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./src/assets/css/pages/index.css" />
+    <script src="https://kit.fontawesome.com/ee9e7bdbcd.js" crossorigin="anonymous"></script>
+    <script defer type="module" src="/src/main.ts"></script>
+    <title>Login</title>
+  </head>
+  <body>
+    <main>
+      <div id="login-form">
+        <form>
+          <h1>Login</h1>
+          <div>
+            <p>Username</p>
+            <span>
+              <i class="fa-regular fa-user"></i>
+              <input type="text" name="name-input" id="name-input" placeholder="type your username" required />
+            </span>
+          </div>
+          <div>
+            <p>Password</p>
+            <span>
+              <i class="fa-solid fa-lock"></i>
+              <input
+                type="password"
+                name="password-input"
+                id="password-input"
+                placeholder="type your password"
+                required
+              />
+            </span>
+          </div>
+          <button id="login-btn">LOGIN</button>
+        </form>
+      </div>
+    </main>
+
+    <footer>&copy;Amit Oren.</footer>
+  </body>
+</html>

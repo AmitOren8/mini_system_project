@@ -1,0 +1,60 @@
+:root {
+  --FORM-FC: hsl(58, 100%, 44%);
+  --FORM-BORDER-COLOR: hsl(0, 0%, 96%);
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem 2rem 4rem;
+  border: 2px solid var(--FORM-BORDER-COLOR);
+  border-radius: 10px;
+  box-shadow: 0px 0px 5px 2px var(--FORM-BORDER-COLOR);
+  font-size: 2rem;
+}
+
+form div {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-bottom: 2px solid var(--FORM-BORDER-COLOR);
+  font-weight: bolder;
+  text-align: start;
+}
+
+form input {
+  background-color: transparent;
+  border: none;
+  font: inherit;
+  color: var(--FORM-FC);
+  opacity: 0.95;
+}
+
+form input::placeholder {
+  color: var(--FORM-FC);
+  opacity: 0.7;
+}
+
+form span {
+  align-self: end;
+}
+
+#login-btn {
+  margin-top: 15px;
+  background-color: transparent;
+  background-image: linear-gradient(150deg, var(--FORM-FC), var(--MAIN-FC));
+  opacity: 0.9;
+  box-shadow: 2px 2px 5px 2px black;
+  border: none;
+  border-radius: 15px;
+  font: inherit;
+  color: #333;
+}

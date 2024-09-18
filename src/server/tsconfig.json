@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "target": "es2016",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "outDir": "./build",
+        "esModuleInterop": true, // allows using ES6 import syntax with CommonJS modules.
+        "removeComments": true,
+        "resolveJsonModule": true, // allows using import statements for JSON files.
+        "forceConsistentCasingInFileNames": true, // ensures that the filenames in import statements are consistently cased with the actual filenames on the file system
+        "strict": true,
+        "skipLibCheck": true
+    },
+    "include": ["src/**/*"]
+}
