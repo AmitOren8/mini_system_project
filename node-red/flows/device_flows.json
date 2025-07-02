@@ -1,0 +1,1138 @@
+[
+    {
+        "id": "c0050767e2fbdd55",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dfabb538e81c46c3",
+        "type": "inject",
+        "z": "c0050767e2fbdd55",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 1280,
+        "wires": [
+            [
+                "cb671bd4550c1f10"
+            ]
+        ]
+    },
+    {
+        "id": "03ac13bd7c810075",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "temp",
+        "func": "const maxTemp = 13.2;\nconst minTemp = 9.5;\n\nconst amplitude = (maxTemp - minTemp) / 2;\nconst offset = (maxTemp + minTemp) / 2;\nconst period = 60 * 1000;\nconst noiseMean = 0;\nconst noiseStdDev = 0.4;\n\nlet timestamp = msg.payload;\nlet elapsedTime = timestamp % period;\nlet phase = (2 * Math.PI * elapsedTime) / period;\n\nlet sinValue = amplitude * Math.sin(phase) + offset;\n\nlet randomNoise = noiseMean + (noiseStdDev * Math.random());\nsinValue += randomNoise;\n\nmsg.topic = 'temperature'\nmsg.payload = sinValue;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 1180,
+        "wires": [
+            [
+                "f8deee24a7722229"
+            ]
+        ]
+    },
+    {
+        "id": "018ff1ad15ad712a",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "co2",
+        "func": "const maxCO2 = 2500;\nconst minCO2 = 1800;\nconst initialPeriod = 45 * 60 * 1000;  \nconst noiseMean = 0;  \nconst noiseStdDev = 45; \n\nconst amplitude = (maxCO2 - minCO2) / 2; \nconst offset = (maxCO2 + minCO2) / 2;  \n\nlet timestamp = msg.payload;\n\nlet totalElapsedTime = timestamp;\nlet numCycles = Math.floor(totalElapsedTime / initialPeriod);\n\nlet currentPeriod = initialPeriod;\nfor (let i = 0; i < numCycles; i++) {\n    currentPeriod *= 0.9;\n}\n\nlet elapsedTime = totalElapsedTime % currentPeriod;\nlet phase = (2 * Math.PI * elapsedTime) / currentPeriod;\n\nlet sinValue = amplitude * Math.sin(phase) + offset;\n\nlet randomNoise = noiseMean + (noiseStdDev * Math.random());\nsinValue += randomNoise;\n\nmsg.topic = 'co2'\nmsg.payload = sinValue;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 1220,
+        "wires": [
+            [
+                "f8deee24a7722229"
+            ]
+        ]
+    },
+    {
+        "id": "d4a8fb0e3eea811b",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "c2h4",
+        "func": "const maxC2H4 = 82;\nconst minC2H4 = 55;\n\nconst amplitude = (maxC2H4 - minC2H4) / 2;\nconst offset = (maxC2H4 + minC2H4) / 2;\nconst period = 60 * 1000;\nconst noiseMean = 0;\nconst noiseStdDev = 0.4;\n\nlet timestamp = msg.payload;\nlet elapsedTime = timestamp % period;\nlet phase = (2 * Math.PI * elapsedTime) / period;\n\nlet sinValue = amplitude * Math.sin(phase) + offset;\n\nlet randomNoise = noiseMean + (noiseStdDev * Math.random());\nsinValue += randomNoise;\n\nmsg.topic = 'c2h4'\nmsg.payload = sinValue;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 1260,
+        "wires": [
+            [
+                "f8deee24a7722229"
+            ]
+        ]
+    },
+    {
+        "id": "6e7e825187f5d2bf",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "humi",
+        "func": "const maxHumi = 98;\nconst minHumi = 92;\n\nconst range = maxHumi - minHumi\n\nlet humidity = maxHumi - (range * Math.random())\n\nmsg.topic = 'humidity'\nmsg.payload = humidity;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 1300,
+        "wires": [
+            [
+                "f8deee24a7722229"
+            ]
+        ]
+    },
+    {
+        "id": "f8deee24a7722229",
+        "type": "join",
+        "z": "c0050767e2fbdd55",
+        "name": "join",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": false,
+        "accumulate": false,
+        "timeout": "",
+        "count": "6",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 670,
+        "y": 1220,
+        "wires": [
+            [
+                "1edafd79b24d8f17"
+            ]
+        ]
+    },
+    {
+        "id": "a0cfb4a1c2103c02",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "date",
+        "func": "const date = new Date()\n\nmsg.topic = 'ts'\nmsg.payload = date\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 1140,
+        "wires": [
+            [
+                "f8deee24a7722229"
+            ]
+        ]
+    },
+    {
+        "id": "036d15b4fda9d8f1",
+        "type": "debug",
+        "z": "c0050767e2fbdd55",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1080,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "7876e29b07124ab3",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "photo",
+        "func": "// Generate random 5 digit number\nconst randomNum = Math.floor(10000 + Math.random() * 90000);\n\n// Set the payload\nmsg.topic = 'image'\nmsg.payload = `SN43JK9/nk${randomNum}`;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 1400,
+        "wires": [
+            [
+                "4d8bf2cb3f7d772d"
+            ]
+        ]
+    },
+    {
+        "id": "4d8bf2cb3f7d772d",
+        "type": "join",
+        "z": "c0050767e2fbdd55",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": false,
+        "accumulate": false,
+        "timeout": "",
+        "count": "3",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 670,
+        "y": 1380,
+        "wires": [
+            [
+                "8fc2f3ebf5504b14"
+            ]
+        ]
+    },
+    {
+        "id": "2db0510d9c748f10",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "date",
+        "func": "const date = new Date()\n\nmsg.topic = 'ts'\nmsg.payload = date\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 1360,
+        "wires": [
+            [
+                "4d8bf2cb3f7d772d"
+            ]
+        ]
+    },
+    {
+        "id": "94a3fa2f94ac8a19",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "5 secs",
+        "func": "// Initialize a variable to keep track of the last forwarded time\ncontext.lastForwardedTime = context.lastForwardedTime || Date.now();\n\n// Calculate the current time\nconst currentTime = Date.now();\n\n// Calculate the elapsed time since the last forwarded message\nconst elapsedTime = currentTime - context.lastForwardedTime;\n\n// Check if 5 seconds have passed since the last forwarded message\nif (elapsedTime >= 5000) {\n    // Update the last forwarded time to the current time\n    context.lastForwardedTime = currentTime;\n\n    // Forward the message to the next node\n    return msg;\n} else {\n    // If less than 5 seconds have passed, do not forward the message\n    return null;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 1380,
+        "wires": [
+            [
+                "2db0510d9c748f10",
+                "7876e29b07124ab3"
+            ]
+        ]
+    },
+    {
+        "id": "cb671bd4550c1f10",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "Pass or Block",
+        "func": "const action = flow.get('SN43JK9');\nif (action === 'start') {\n    return msg;\n} else {\n    return null;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 140,
+        "y": 1340,
+        "wires": [
+            [
+                "a0cfb4a1c2103c02",
+                "03ac13bd7c810075",
+                "018ff1ad15ad712a",
+                "d4a8fb0e3eea811b",
+                "6e7e825187f5d2bf",
+                "94a3fa2f94ac8a19",
+                "83b818aad3b7c126"
+            ]
+        ]
+    },
+    {
+        "id": "9781ab1b10cef277",
+        "type": "switch",
+        "z": "c0050767e2fbdd55",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "start",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "stop",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 330,
+        "y": 880,
+        "wires": [
+            [
+                "600a89562cc493c1"
+            ],
+            [
+                "597cc7fa29dda27f"
+            ]
+        ]
+    },
+    {
+        "id": "597cc7fa29dda27f",
+        "type": "change",
+        "z": "c0050767e2fbdd55",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "SN43JK9",
+                "pt": "flow",
+                "to": "stop",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 900,
+        "wires": [
+            [
+                "94fdef215cdc3c89"
+            ]
+        ]
+    },
+    {
+        "id": "600a89562cc493c1",
+        "type": "change",
+        "z": "c0050767e2fbdd55",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "SN43JK9",
+                "pt": "flow",
+                "to": "start",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 860,
+        "wires": [
+            [
+                "94fdef215cdc3c89"
+            ]
+        ]
+    },
+    {
+        "id": "c55ba58a0053d10d",
+        "type": "comment",
+        "z": "c0050767e2fbdd55",
+        "name": "control flow device 2",
+        "info": "",
+        "x": 130,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "5a9d6ca8fdbd5097",
+        "type": "comment",
+        "z": "c0050767e2fbdd55",
+        "name": "Device flow device 2",
+        "info": "",
+        "x": 130,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "94fdef215cdc3c89",
+        "type": "debug",
+        "z": "c0050767e2fbdd55",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "83b818aad3b7c126",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "Node ID",
+        "func": "const nodeID = 'SN43JK9'\n\nmsg.topic = 'nodeID'\nmsg.payload = nodeID\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1080,
+        "wires": [
+            [
+                "f8deee24a7722229",
+                "4d8bf2cb3f7d772d"
+            ]
+        ]
+    },
+    {
+        "id": "a1d15585ec8cacaa",
+        "type": "mqtt in",
+        "z": "c0050767e2fbdd55",
+        "name": "",
+        "topic": "node/SN43JK9/cmd",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "bc5b2de8225a7635",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 880,
+        "wires": [
+            [
+                "9781ab1b10cef277"
+            ]
+        ]
+    },
+    {
+        "id": "b442143d012f3f81",
+        "type": "mqtt in",
+        "z": "c0050767e2fbdd55",
+        "name": "sensor",
+        "topic": "node/SN43JK9/sensor",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "bc5b2de8225a7635",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 910,
+        "y": 1220,
+        "wires": [
+            [
+                "036d15b4fda9d8f1"
+            ]
+        ]
+    },
+    {
+        "id": "5cf16a7b50b44ec5",
+        "type": "mqtt in",
+        "z": "c0050767e2fbdd55",
+        "name": "photo",
+        "topic": "node/SN43JK9/image",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "bc5b2de8225a7635",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 910,
+        "y": 1380,
+        "wires": [
+            [
+                "036d15b4fda9d8f1"
+            ]
+        ]
+    },
+    {
+        "id": "1edafd79b24d8f17",
+        "type": "mqtt out",
+        "z": "c0050767e2fbdd55",
+        "name": "sensor",
+        "topic": "node/SN43JK9/sensor",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "2bccd6ce44c81b4c",
+        "x": 790,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "8fc2f3ebf5504b14",
+        "type": "mqtt out",
+        "z": "c0050767e2fbdd55",
+        "name": "photo",
+        "topic": "node/SN43JK9/image",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "2bccd6ce44c81b4c",
+        "x": 790,
+        "y": 1380,
+        "wires": []
+    },
+    {
+        "id": "00c305587cbc6557",
+        "type": "inject",
+        "z": "c0050767e2fbdd55",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 500,
+        "wires": [
+            [
+                "9727d5083abb49e2"
+            ]
+        ]
+    },
+    {
+        "id": "1d6cfc531465ec5f",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "temp",
+        "func": "const maxTemp = 13.2;\nconst minTemp = 9.5;\n\nconst amplitude = (maxTemp - minTemp) / 2;\nconst offset = (maxTemp + minTemp) / 2;\nconst period = 60 * 1000;\nconst noiseMean = 0;\nconst noiseStdDev = 0.4;\n\nlet timestamp = msg.payload;\nlet elapsedTime = timestamp % period;\nlet phase = (2 * Math.PI * elapsedTime) / period;\n\nlet sinValue = amplitude * Math.sin(phase) + offset;\n\nlet randomNoise = noiseMean + (noiseStdDev * Math.random());\nsinValue += randomNoise;\n\nmsg.topic = 'temperature'\nmsg.payload = sinValue;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 400,
+        "wires": [
+            [
+                "8ac6ae220522781c"
+            ]
+        ]
+    },
+    {
+        "id": "7ac7e3890bc853dc",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "co2",
+        "func": "const maxCO2 = 2500;\nconst minCO2 = 1800;\nconst initialPeriod = 45 * 60 * 1000;  \nconst noiseMean = 0;  \nconst noiseStdDev = 45; \n\nconst amplitude = (maxCO2 - minCO2) / 2; \nconst offset = (maxCO2 + minCO2) / 2;  \n\nlet timestamp = msg.payload;\n\nlet totalElapsedTime = timestamp;\nlet numCycles = Math.floor(totalElapsedTime / initialPeriod);\n\nlet currentPeriod = initialPeriod;\nfor (let i = 0; i < numCycles; i++) {\n    currentPeriod *= 0.9;\n}\n\nlet elapsedTime = totalElapsedTime % currentPeriod;\nlet phase = (2 * Math.PI * elapsedTime) / currentPeriod;\n\nlet sinValue = amplitude * Math.sin(phase) + offset;\n\nlet randomNoise = noiseMean + (noiseStdDev * Math.random());\nsinValue += randomNoise;\n\nmsg.topic = 'co2'\nmsg.payload = sinValue;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 440,
+        "wires": [
+            [
+                "8ac6ae220522781c"
+            ]
+        ]
+    },
+    {
+        "id": "9b7580317c5ac399",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "c2h4",
+        "func": "const maxC2H4 = 82;\nconst minC2H4 = 55;\n\nconst amplitude = (maxC2H4 - minC2H4) / 2;\nconst offset = (maxC2H4 + minC2H4) / 2;\nconst period = 60 * 1000;\nconst noiseMean = 0;\nconst noiseStdDev = 0.4;\n\nlet timestamp = msg.payload;\nlet elapsedTime = timestamp % period;\nlet phase = (2 * Math.PI * elapsedTime) / period;\n\nlet sinValue = amplitude * Math.sin(phase) + offset;\n\nlet randomNoise = noiseMean + (noiseStdDev * Math.random());\nsinValue += randomNoise;\n\nmsg.topic = 'c2h4'\nmsg.payload = sinValue;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 480,
+        "wires": [
+            [
+                "8ac6ae220522781c"
+            ]
+        ]
+    },
+    {
+        "id": "119f67b2af08f624",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "humi",
+        "func": "const maxHumi = 98;\nconst minHumi = 92;\n\nconst range = maxHumi - minHumi\n\nlet humidity = maxHumi - (range * Math.random())\n\nmsg.topic = 'humidity'\nmsg.payload = humidity;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 520,
+        "wires": [
+            [
+                "8ac6ae220522781c"
+            ]
+        ]
+    },
+    {
+        "id": "8ac6ae220522781c",
+        "type": "join",
+        "z": "c0050767e2fbdd55",
+        "name": "join",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": false,
+        "accumulate": false,
+        "timeout": "",
+        "count": "6",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 670,
+        "y": 440,
+        "wires": [
+            [
+                "4cb3b46b2a41b96b"
+            ]
+        ]
+    },
+    {
+        "id": "94a3abc3adbf5122",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "date",
+        "func": "const date = new Date()\n\nmsg.topic = 'ts'\nmsg.payload = date\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 360,
+        "wires": [
+            [
+                "8ac6ae220522781c"
+            ]
+        ]
+    },
+    {
+        "id": "54b18f09650ff63d",
+        "type": "mqtt in",
+        "z": "c0050767e2fbdd55",
+        "name": "sensor",
+        "topic": "node/AJ24K01/sensor",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "2bccd6ce44c81b4c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 910,
+        "y": 440,
+        "wires": [
+            [
+                "63f4f0983acdcb76"
+            ]
+        ]
+    },
+    {
+        "id": "4cb3b46b2a41b96b",
+        "type": "mqtt out",
+        "z": "c0050767e2fbdd55",
+        "name": "sensor",
+        "topic": "node/AJ24K01/sensor",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "2bccd6ce44c81b4c",
+        "x": 790,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "63f4f0983acdcb76",
+        "type": "debug",
+        "z": "c0050767e2fbdd55",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1080,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "d9fc10ea30185322",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "photo",
+        "func": "// Generate random 5 digit number\nconst randomNum = Math.floor(10000 + Math.random() * 90000);\n\n// Set the payload\nmsg.topic = 'image'\nmsg.payload = `AJ24KO1/nk${randomNum}`;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 620,
+        "wires": [
+            [
+                "80d7d5bf5c3904b4"
+            ]
+        ]
+    },
+    {
+        "id": "be5ff9c5fcde6e4e",
+        "type": "mqtt in",
+        "z": "c0050767e2fbdd55",
+        "name": "photo",
+        "topic": "node/AJ24K01/image",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "2bccd6ce44c81b4c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 910,
+        "y": 600,
+        "wires": [
+            [
+                "63f4f0983acdcb76"
+            ]
+        ]
+    },
+    {
+        "id": "4a31d0b0b6355695",
+        "type": "mqtt out",
+        "z": "c0050767e2fbdd55",
+        "name": "photo",
+        "topic": "node/AJ24K01/image",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "2bccd6ce44c81b4c",
+        "x": 790,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "80d7d5bf5c3904b4",
+        "type": "join",
+        "z": "c0050767e2fbdd55",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": false,
+        "accumulate": false,
+        "timeout": "",
+        "count": "3",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 670,
+        "y": 600,
+        "wires": [
+            [
+                "4a31d0b0b6355695"
+            ]
+        ]
+    },
+    {
+        "id": "c0ce315d21b27a5e",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "date",
+        "func": "const date = new Date()\n\nmsg.topic = 'ts'\nmsg.payload = date\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 580,
+        "wires": [
+            [
+                "80d7d5bf5c3904b4"
+            ]
+        ]
+    },
+    {
+        "id": "1aa6f147321969ad",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "5 secs",
+        "func": "// Initialize a variable to keep track of the last forwarded time\ncontext.lastForwardedTime = context.lastForwardedTime || Date.now();\n\n// Calculate the current time\nconst currentTime = Date.now();\n\n// Calculate the elapsed time since the last forwarded message\nconst elapsedTime = currentTime - context.lastForwardedTime;\n\n// Check if 5 seconds have passed since the last forwarded message\nif (elapsedTime >= 5000) {\n    // Update the last forwarded time to the current time\n    context.lastForwardedTime = currentTime;\n\n    // Forward the message to the next node\n    return msg;\n} else {\n    // If less than 5 seconds have passed, do not forward the message\n    return null;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 600,
+        "wires": [
+            [
+                "d9fc10ea30185322",
+                "c0ce315d21b27a5e"
+            ]
+        ]
+    },
+    {
+        "id": "83eba750b8828b8a",
+        "type": "mqtt in",
+        "z": "c0050767e2fbdd55",
+        "name": "",
+        "topic": "node/AJ24K01/cmd",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "2bccd6ce44c81b4c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 100,
+        "wires": [
+            [
+                "a2f925b4ef4ca263"
+            ]
+        ]
+    },
+    {
+        "id": "9727d5083abb49e2",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "Pass or Block",
+        "func": "const action = flow.get('AJ24K01');\nif (action === 'start') {\n    return msg;\n} else {\n    return null;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 140,
+        "y": 560,
+        "wires": [
+            [
+                "1d6cfc531465ec5f",
+                "7ac7e3890bc853dc",
+                "9b7580317c5ac399",
+                "119f67b2af08f624",
+                "94a3abc3adbf5122",
+                "1aa6f147321969ad",
+                "39590a4e774186d0"
+            ]
+        ]
+    },
+    {
+        "id": "a2f925b4ef4ca263",
+        "type": "switch",
+        "z": "c0050767e2fbdd55",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "start",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "stop",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 330,
+        "y": 100,
+        "wires": [
+            [
+                "89f4830333227d2a"
+            ],
+            [
+                "be73cc7bc7056013"
+            ]
+        ]
+    },
+    {
+        "id": "be73cc7bc7056013",
+        "type": "change",
+        "z": "c0050767e2fbdd55",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "AJ24K01",
+                "pt": "flow",
+                "to": "stop",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 120,
+        "wires": [
+            [
+                "1076d7d0abcd67ab"
+            ]
+        ]
+    },
+    {
+        "id": "89f4830333227d2a",
+        "type": "change",
+        "z": "c0050767e2fbdd55",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "AJ24K01",
+                "pt": "flow",
+                "to": "start",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 80,
+        "wires": [
+            [
+                "1076d7d0abcd67ab"
+            ]
+        ]
+    },
+    {
+        "id": "8d65e74412f2ac13",
+        "type": "comment",
+        "z": "c0050767e2fbdd55",
+        "name": "control flow device 1",
+        "info": "",
+        "x": 130,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "3182a7cb1fb1ef79",
+        "type": "comment",
+        "z": "c0050767e2fbdd55",
+        "name": "Device flow device 1",
+        "info": "",
+        "x": 130,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "1076d7d0abcd67ab",
+        "type": "debug",
+        "z": "c0050767e2fbdd55",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "39590a4e774186d0",
+        "type": "function",
+        "z": "c0050767e2fbdd55",
+        "name": "Node ID",
+        "func": "const nodeID = 'AJ24K01'\n\nmsg.topic = 'nodeID'\nmsg.payload = nodeID\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 300,
+        "wires": [
+            [
+                "8ac6ae220522781c",
+                "80d7d5bf5c3904b4"
+            ]
+        ]
+    },
+    {
+        "id": "bc5b2de8225a7635",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "2bccd6ce44c81b4c",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
